@@ -13,6 +13,9 @@ public class CopyCommand implements Operation { //Concrete Command
     private Command cmd;
 
     public CopyCommand(Command cmd) {
+        if (cmd == null)
+            throw new NullPointerException();
+
         this.cmd = cmd;
     }
 
@@ -26,7 +29,9 @@ public class CopyCommand implements Operation { //Concrete Command
      */
     @Override
     public boolean execute(Path source) throws IOException {
-        //path - cesta k souboru se kterym se ma dana operace provedst
+        if (source == null)
+            throw new NullPointerException();
+
         return cmd.copy(source);
     }
 

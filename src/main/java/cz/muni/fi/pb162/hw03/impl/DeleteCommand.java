@@ -13,6 +13,9 @@ public class DeleteCommand implements Operation {
     private Command cmd;
 
     public DeleteCommand(Command cmd) {
+        if (cmd == null)
+            throw new NullPointerException();
+
         this.cmd = cmd;
     }
 
@@ -26,6 +29,9 @@ public class DeleteCommand implements Operation {
      */
     @Override
     public boolean execute(Path source) throws IOException {
+        if (source == null)
+            throw new NullPointerException();
+
         return cmd.delete(source);
     }
 }

@@ -22,6 +22,13 @@ public class RemoteControl {
         this.operation = operation;
     }
 
+    /**
+     * Execute operation on given path. Command is executed if path matches command's pattern, nothing happens
+     * otherwise
+     *
+     * @param source path to file on filesystem
+     * @throws IOException if operation execution failed
+     */
     public void processOperation(Path source) throws IOException {
         if (source == null)
             throw new NullPointerException();

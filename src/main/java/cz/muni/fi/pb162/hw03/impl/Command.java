@@ -24,8 +24,10 @@ public class Command { //reciver
     public Command(Operator op, String ext, File logFile) {
         if (op == null || ext == null || logFile == null)
             throw new NullPointerException();
+
         if (!op.equals(Operator.DEL))
-            throw new IllegalArgumentException("argument is missing!");
+            throw new IllegalArgumentException("argument is missing.");
+
         this.op = op;
         this.ext = ext;
         this.logFile = logFile;
@@ -34,6 +36,7 @@ public class Command { //reciver
     public Command(Operator op, String ext, String arg, File logFile) {
         if (op == null || ext == null || arg == null || logFile == null)
             throw new NullPointerException();
+
         this.op = op;
         this.ext = ext;
         this.dest = Paths.get(arg);
@@ -56,18 +59,37 @@ public class Command { //reciver
         return logFile;
     }
 
+    /**
+     * Delete file given in source when source matches command's pattern
+     *
+     * @param source file to delete
+     * @return true if pattern matches path and command was executed, false if pattern did not match
+     * @throws IOException if move failed or event can not be logged
+     */
     public boolean delete(Path source) throws IOException {
+        if (source == null)
+            throw new NullPointerException();
+
         String fileExt = FilenameUtils.getExtension(source.toString());
         if (fileExt.equals(this.getExt())) {
-            Files.delete(source);
-            logEvent(source.toString());
+            Files.delete(source); //ex
+            logEvent(source.toString()); //ex
             return true;
         } else
             return false;
-
     }
 
+    /**
+     * Copy file given in source when source matches command's pattern
+     *
+     * @param source file to copy
+     * @return true if pattern matches path and command was executed, false if pattern did not match
+     * @throws IOException if move failed or event can not be logged
+     */
     public boolean copy(Path source) throws IOException {
+        if (source == null)
+            throw new NullPointerException();
+
         String fileExt = FilenameUtils.getExtension(source.toString());
         if (fileExt.equals(this.getExt())) {
             String dest = prepareDestination(source);
@@ -80,7 +102,17 @@ public class Command { //reciver
 
     }
 
+    /**
+     * Move file given in source when source matches command's pattern
+     *
+     * @param source file to move
+     * @return true if pattern matches path and command was executed, false if pattern did not match
+     * @throws IOException if move failed or event can not be logged
+     */
     public boolean move(Path source) throws IOException {
+        if (source == null)
+            throw new NullPointerException();
+
         String fileExt = FilenameUtils.getExtension(source.toString());
         if (fileExt.equals(this.getExt())) {
 
@@ -93,7 +125,16 @@ public class Command { //reciver
             return false;
     }
 
+    /**
+     * Create path to given file in destination folder
+     *
+     * @param source path to file
+     * @return path to file in destination folder
+     */
     private String prepareDestination(Path source) {
+        if (source == null)
+            throw new NullPointerException();
+
         createDestDir(Paths.get(this.getDest().toString()));
         String dest = createDest(this.getDest(), source);
         if (new File(dest).exists()) {
@@ -111,6 +152,9 @@ public class Command { //reciver
      * @return path to file in destination directory as string
      */
     private String createDest(Path destDir, Path source) {
+        if (destDir == null || source == null)
+            throw new NullPointerException();
+
         File f = source.toFile();
         String dest = destDir.toString();
         String baseName = FilenameUtils.getBaseName(f.getName());
@@ -119,15 +163,29 @@ public class Command { //reciver
         return dest;
     }
 
+    /**
+     * Create destination folder
+     *
+     * @param dest path to destination folder
+     */
     private void createDestDir(Path dest) {
         if (dest == null)
             throw new NullPointerException();
-        new File(dest.toString()).mkdirs();
+        if (!dest.toFile().exists())
+            new File(dest.toString()).mkdirs();
     }
 
+    /**
+     * Generate unique name of given file using 3-digit counter.
+     *
+     * @param dest path to file in destination folder
+     * @return unique file name as path to file in destination folder
+     * @see <a href="https://gitlab.com/munijava/pb162-2015-hw03-filemanager#multiple-files-with-same-name">Multiple files with same name</a>
+     */
     private String getUniqueFilename(String dest) {
         if (dest == null)
             throw new NullPointerException();
+
         File file = new File(dest);
         String baseName = FilenameUtils.getBaseName(file.getName());
         String extension = FilenameUtils.getExtension(file.getName());
@@ -143,6 +201,14 @@ public class Command { //reciver
         return file.toString();
     }
 
+    /**
+     * Log event in specified format.
+     *
+     * @param source path to file in source folder
+     * @param dest   path to file in destination folder
+     * @throws IOException IOException if command can not be logged
+     * @see <a href="https://gitlab.com/munijava/pb162-2015-hw03-filemanager#log-file">Log file</a>
+     */
     private void logEvent(String source, String dest) throws IOException {
         if (source == null || (!this.getOp().equals(Operator.DEL) && dest == null))
             throw new NullPointerException();
@@ -155,6 +221,13 @@ public class Command { //reciver
         }
     }
 
+    /**
+     * Log event in specified format.
+     *
+     * @see <a href="https://gitlab.com/munijava/pb162-2015-hw03-filemanager#log-file">Log file</a>
+     * @param source path to file in source folder
+     * @throws IOException IOException if command can not be logged
+     */
     private void logEvent(String source) throws IOException {
         if (source == null)
             throw new NullPointerException();

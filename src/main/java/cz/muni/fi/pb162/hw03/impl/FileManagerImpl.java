@@ -1,7 +1,6 @@
 package cz.muni.fi.pb162.hw03.impl;
 
 import cz.muni.fi.pb162.hw03.FileManager;
-import cz.muni.fi.pb162.hw03.Operation;
 import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedReader;
@@ -28,10 +27,10 @@ public class FileManagerImpl implements FileManager {
     @Override
     public void executeJob(String jobPath, String logFilePath) throws Exception {
         if (jobPath == null || logFilePath == null)
-            throw new NullPointerException("Parameters can not be null!");
+            throw new NullPointerException("Parameters can not be null.");
 
         if (!new File(jobPath).exists()) {
-            throw new IllegalArgumentException("jobPath file does not exist");
+            throw new IllegalArgumentException("jobPath file does not exist.");
         }
 
         File logFile = createLogFile(logFilePath);
@@ -42,7 +41,7 @@ public class FileManagerImpl implements FileManager {
 
             String line = reader.readLine(); //read second line (required)
             if (line == null)
-                throw new WrongFileFormatException("Wrong format of jobPath file - second line is required");
+                throw new WrongFileFormatException("Wrong format of jobPath file - second line is required.");
 
             do { //process line
                 if (line.isEmpty() || line.startsWith("#")) {
@@ -63,13 +62,18 @@ public class FileManagerImpl implements FileManager {
      * @throws IllegalArgumentException logPath contains illegal character/s
      */
     private File createLogFile(String logFilePath) throws IllegalArgumentException {
-        File logFile = new File(logFilePath);
-        logFile.getParentFile().mkdirs(); //vytvori adresare po ceste
+        if (logFilePath == null)
+            throw new NullPointerException();
 
-        try {
-            logFile.createNewFile();
-        } catch (IOException e) {
-            throw new IllegalArgumentException("logFilePath contains illegal character/s");
+        File logFile = new File(logFilePath);
+        if (!logFile.exists()) {
+            logFile.getParentFile().mkdirs(); //create nonexistent dirs on logFile path
+
+            try {
+                logFile.createNewFile(); //create logFile
+            } catch (IOException e) {
+                throw new IllegalArgumentException("logFilePath contains illegal character/s.");
+            }
         }
         return logFile;
     }
@@ -83,16 +87,19 @@ public class FileManagerImpl implements FileManager {
      * @see <a href="https://gitlab.com/munijava/pb162-2015-hw03-filemanager#job-file-syntax">Job file syntax</a>
      */
     private Command createCommand(String line, File logFile) throws WrongLineFormatException {
+        if (line == null || logFile == null)
+            throw new NullPointerException();
+
         //required format: <command>;<file extension>;<optional argument>
         String[] tokens = line.split(";");
-        Operator op = convertOperator(tokens[0]); //operator
+        Operator op = convertOperator(tokens[0]);
         if (tokens.length < 2 || tokens.length > 3 || (!op.equals(Operator.DEL) && tokens.length != 3))
             throw new WrongLineFormatException("Wrong format of line in jobPath file");
 
-        String fileExtension = tokens[1]; //pripona
+        String fileExtension = tokens[1];
         Command cmd;
         if (tokens.length == 3) {
-            String argument = tokens[2]; //argument
+            String argument = tokens[2]; //optional argument
             cmd = new Command(op, fileExtension, argument, logFile);
         } else {
             cmd = new Command(op, fileExtension, logFile);
@@ -121,7 +128,7 @@ public class FileManagerImpl implements FileManager {
     }
 
     /**
-     * Converts operator given as String to Operator.
+     * Convert operator given as String to Operator.
      *
      * @param op operator as String to convert
      * @return operator as enum Operator value
@@ -130,6 +137,7 @@ public class FileManagerImpl implements FileManager {
     private Operator convertOperator(String op) throws WrongLineFormatException {
         if (op == null)
             throw new NullPointerException();
+
         switch (op) {
             case "DEL":
                 return Operator.DEL;
@@ -142,27 +150,44 @@ public class FileManagerImpl implements FileManager {
         }
     }
 
-    private void walkRecursively(File root, Command cmd) throws WrongLineFormatException, IOException {
+    /**
+     * Recursively get through specified folder
+     *
+     * @param root folder to be processed
+     * @param cmd  command to process on given folder
+     * @throws IOException if command process failed
+     */
+    private void walkRecursively(File root, Command cmd) throws IOException {
         if (root == null || cmd == null)
             throw new NullPointerException();
-        File[] content = root.listFiles(); //obsah slozky
+
+        File[] content = root.listFiles(); //dir content
         if (content == null)
-            return; //vse zpracovano
+            return; //everything (all files and subfolders) processed
         for (File f : content) {
             if (f.isDirectory()) {
-                walkRecursively(f, cmd); //rekurzivni zpracovani adresare
+                walkRecursively(f, cmd); //process subfolder
             } else {
-                //zpracovani souboru
                 String fileExt = FilenameUtils.getExtension(f.getPath());
                 if (fileExt.equals(cmd.getExt())) {
                     fileProcess(f, cmd); //vyhazuje vyjimku
                 } else
-                    continue; //se souborem neni treba nic delat (nema danou priponu)
+                    continue;
             }
         }
     }
 
-    private void fileProcess(File f, Command cmd) throws WrongLineFormatException, IOException {
+    /**
+     * Process command on specified file
+     *
+     * @param f   file to process
+     * @param cmd command to process on given file
+     * @throws IOException if operation processed by control failed
+     */
+    private void fileProcess(File f, Command cmd) throws IOException {
+        if (f == null || cmd == null)
+            throw new NullPointerException();
+
         Path source = f.toPath();
         RemoteControl control = new RemoteControl();
         switch (cmd.getOp()) {

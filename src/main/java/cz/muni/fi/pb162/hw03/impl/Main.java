@@ -11,12 +11,13 @@ public class Main {
      * @param args input parameters
      */
     public static void main(String[] args) {
-
         if (args.length != 2) {
             System.out.println("Usage info: Wrong parameters");
             System.exit(1);
         }
+
         FileManagerImpl fm = new FileManagerImpl();
+
         try {
             fm.executeJob(args[0], args[1]);
         } catch (Exception e) {
@@ -25,6 +26,5 @@ public class Main {
         }
 
         System.out.println("Done - log: " + args[1]);
-
     }
 }
