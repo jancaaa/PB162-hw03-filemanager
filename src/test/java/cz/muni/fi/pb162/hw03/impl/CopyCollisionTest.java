@@ -52,10 +52,10 @@ public class CopyCollisionTest {
 
     @Test
     public void testCollidingCopy() {
-        assertTrue(String.format("First file named '%s' shuld exist in target dir.", FIRST_FILE),
+        assertTrue(String.format("First file named '%s' should exist in target dir.", FIRST_FILE),
                 Files.exists(subPath(TestSupport.WORK_DEST, FIRST_FILE)));
 
-        assertTrue(String.format("Second file named '%s' shuld exist in target dir.", SECOND_FILE),
+        assertTrue(String.format("Second file named '%s' should exist in target dir.", SECOND_FILE),
                 Files.exists(subPath(TestSupport.WORK_DEST, SECOND_FILE)));
     }
 

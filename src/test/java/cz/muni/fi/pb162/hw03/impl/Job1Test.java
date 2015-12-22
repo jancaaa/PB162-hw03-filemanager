@@ -40,7 +40,7 @@ public class Job1Test {
         try {
             fileManager.executeJob(TestSupport.JOB_FILE_PATH.toString(), logPath.toString());
         } catch (Exception e) {
-            fail("Execution of job1 should pass. Do you handle comments and other things in jobfile correctly?");
+            fail("Execution of job1 should pass. Do you handle comments and other things in jobFile correctly?");
         }
 
         // awesome doc.odt

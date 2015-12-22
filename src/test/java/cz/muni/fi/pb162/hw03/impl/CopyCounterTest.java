@@ -37,7 +37,7 @@ public class CopyCounterTest {
         String file1 = FILE_NAME;
         String file2 = FILE_NAME.replace("[.]", "_001.");
 
-        assertTrue("File " + file1 + "should exist in dest dir", Files.exists(subPath(testSupport.getJobSrc(), file1)));
+        assertTrue("File " + file1 + " should exist in dest dir", Files.exists(subPath(testSupport.getJobSrc(), file1)));
 
         assertTrue("File " + file2 + " should also be in destination directory", Files.exists(subPath(TestSupport.WORK_DEST, "docs", file2)));
 

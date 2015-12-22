@@ -34,7 +34,7 @@ public class SimpleCopyTest {
 
     @Test
     public void testFileCopied() {
-        assertTrue("File " + FILE_NAME + "should remain src folder", Files.exists(subPath(testSupport.getJobSrc(), FILE_NAME)));
+        assertTrue("File " + FILE_NAME + " should remain src folder", Files.exists(subPath(testSupport.getJobSrc(), FILE_NAME)));
 
         assertTrue("File " + FILE_NAME + " should also be in destination directory", Files.exists(subPath(TestSupport.WORK_DEST, "docs", FILE_NAME)));
     }

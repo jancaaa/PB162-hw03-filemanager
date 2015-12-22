@@ -36,7 +36,7 @@ public class SimpleMoveTest {
 
     @Test
     public void testFileMoved() {
-        assertFalse("File " + FILE_NAME + "shouldn't be in src folder", Files.exists(subPath(testSupport.getJobSrc(), FILE_NAME)));
+        assertFalse("File " + FILE_NAME + " shouldn't be in src folder", Files.exists(subPath(testSupport.getJobSrc(), FILE_NAME)));
 
         assertTrue("File " + FILE_NAME + " should be in destination directory", Files.exists(subPath(TestSupport.WORK_DEST, "docs", FILE_NAME)));
     }
