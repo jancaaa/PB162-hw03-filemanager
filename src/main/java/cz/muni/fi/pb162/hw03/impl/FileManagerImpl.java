@@ -1,14 +1,12 @@
 package cz.muni.fi.pb162.hw03.impl;
 
 import cz.muni.fi.pb162.hw03.FileManager;
-import org.apache.commons.io.FilenameUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 
 /**
  * @author: Jana Zahradnickova,  UCO 433598
@@ -168,11 +166,7 @@ public class FileManagerImpl implements FileManager {
             if (f.isDirectory()) {
                 walkRecursively(f, cmd); //process subfolder
             } else {
-                String fileExt = FilenameUtils.getExtension(f.getPath());
-                if (fileExt.equals(cmd.getExt())) {
-                    fileProcess(f, cmd); //vyhazuje vyjimku
-                } else
-                    continue;
+                fileProcess(f, cmd);//process file
             }
         }
     }
@@ -188,7 +182,6 @@ public class FileManagerImpl implements FileManager {
         if (f == null || cmd == null)
             throw new NullPointerException();
 
-        Path source = f.toPath();
         RemoteControl control = new RemoteControl();
         switch (cmd.getOp()) {
             case MV: {
@@ -205,6 +198,6 @@ public class FileManagerImpl implements FileManager {
                 break;
             }
         }
-        control.processOperation(source);
+        control.processOperation(f.toPath());
     }
 }
